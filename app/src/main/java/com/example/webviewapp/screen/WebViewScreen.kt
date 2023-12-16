@@ -7,18 +7,21 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.icons.filled.Home
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -33,6 +36,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 fun WebViewScreen() {
     val context = LocalContext.current
     val url = remember { mutableStateOf("https://newsnowbharatvarsh.com/") }
+    val buttonState = remember { mutableStateOf("") }
 
     val isLoading = remember { mutableStateOf(true) }
 
@@ -76,33 +80,73 @@ fun WebViewScreen() {
     Box(
         Modifier
             .fillMaxWidth()
-            .offset(y = 750.dp),
-        contentAlignment = Alignment.Center
+            .fillMaxHeight(),
+        contentAlignment = Alignment.BottomCenter
     ) {
         Row(
             modifier = Modifier
-                .fillMaxWidth(0.5f)
-                .background(Color.Black, shape = CircleShape),
+                .fillMaxWidth()
+                .background(Color.Black),
             horizontalArrangement = Arrangement.SpaceAround,
         ) {
             IconButton(
+                modifier = Modifier
+                    .padding(horizontal = 10.dp)
+                    .background(
+                        if (buttonState.value == "back") buttonColorState(
+                            "back",
+                            buttonState
+                        ) else Color.Transparent,
+                        shape = CircleShape
+                    ),
                 onClick = {
                     if (webView.canGoBack()) {
                         webView.goBack()
+                        buttonState.value = "back"
                     }
+
                 }
             ) {
                 Icon(
                     imageVector = Icons.Default.ArrowBack,
-                    contentDescription = "Back",
+                    contentDescription = "back",
                     tint = Color.White
                 )
             }
-
             IconButton(
+                modifier = Modifier
+                    .padding(horizontal = 10.dp)
+                    .background(
+                        if (buttonState.value == "home") buttonColorState(
+                            "home",
+                            buttonState
+                        ) else Color.Transparent,
+                        shape = CircleShape
+                    ),
+                onClick = {
+                    webView.loadUrl(url.value)
+                    buttonState.value = "home"
+                }
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Home,
+                    contentDescription = "Home",
+                    tint = Color.White
+                )
+            }
+            IconButton(
+                modifier = Modifier
+                    .padding(horizontal = 10.dp)
+                    .background(
+                        if (buttonState.value == "forward") buttonColorState(
+                            "forward",
+                            buttonState
+                        ) else Color.Transparent, shape = CircleShape
+                    ),
                 onClick = {
                     if (webView.canGoForward()) {
                         webView.goForward()
+                        buttonState.value = "forward"
                     }
                 }
             ) {
@@ -116,3 +160,17 @@ fun WebViewScreen() {
     }
 
 }
+
+fun buttonColorState(state: String, buttonState: MutableState<String>): Color {
+    buttonState.value = " "
+    return when (state) {
+        "home",
+        "back",
+        "forward" ->
+            Color.White
+
+        else -> Color.Transparent
+    }
+}
+
+
