@@ -1,8 +1,10 @@
 package com.example.webviewapp.screen
 
+import android.content.Context
 import android.graphics.Bitmap
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -80,13 +82,14 @@ fun WebViewScreen() {
     Box(
         Modifier
             .fillMaxWidth()
-            .fillMaxHeight(),
+            .fillMaxHeight()
+            .padding(vertical = 20.dp),
         contentAlignment = Alignment.BottomCenter
     ) {
         Row(
             modifier = Modifier
-                .fillMaxWidth()
-                .background(Color.Black),
+                .fillMaxWidth(0.7f)
+                .background(Color.Black, shape = CircleShape),
             horizontalArrangement = Arrangement.SpaceAround,
         ) {
             IconButton(
@@ -104,7 +107,7 @@ fun WebViewScreen() {
                         webView.goBack()
                         buttonState.value = "back"
                     }
-
+                    getMessage(context,"Back")
                 }
             ) {
                 Icon(
@@ -126,6 +129,7 @@ fun WebViewScreen() {
                 onClick = {
                     webView.loadUrl(url.value)
                     buttonState.value = "home"
+                    getMessage(context,"Home")
                 }
             ) {
                 Icon(
@@ -147,6 +151,7 @@ fun WebViewScreen() {
                     if (webView.canGoForward()) {
                         webView.goForward()
                         buttonState.value = "forward"
+                        getMessage(context,"Forward")
                     }
                 }
             ) {
@@ -173,4 +178,6 @@ fun buttonColorState(state: String, buttonState: MutableState<String>): Color {
     }
 }
 
-
+fun getMessage(context: Context, msg:String){
+    Toast.makeText(context,msg,Toast.LENGTH_SHORT).show()
+}
